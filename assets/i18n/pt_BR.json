@@ -1,3 +1,13 @@
 {
-
+  "application": {
+    "title": "Challenge Flutter"
+  },
+  "label": {
+    "welcome_title_text": "Bem-vindo",
+    "welcome_description_text": "Realize o cadastro de sua empresa de forma rapida e agil",
+    "search_submit_button": "Consultar CNPJ",
+    "nif_hint_input": "CNPJ",
+    "no_nif_label_text": "Não possui um CNPJ? ",
+    "no_nif_label_button": "Cadastre aqui"
+  }
 }
