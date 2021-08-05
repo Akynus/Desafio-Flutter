@@ -1,8 +1,8 @@
-import 'package:challenge_flutter/src/models/company.dart';
-import 'package:challenge_flutter/src/resources/providers/company_api_provider.dart';
+import 'package:challenge_flutter/src/models/request_model.dart';
+import 'package:challenge_flutter/src/resources/providers/search_api_provider.dart';
 
 class Repository {
-  final companyApiProvider = CompanyApiProvider();
+  final _requestApi = RequestApiProvider();
 
-  Future<Company?> fetchCompanyData({required String code}) => companyApiProvider.getData(code: code);
+  Future<RequestModel> fetchRequestData({required String nif}) => _requestApi.getData(nif: nif);
 }

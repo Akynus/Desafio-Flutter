@@ -4,10 +4,17 @@
   },
   "label": {
     "welcome_title_text": "Bem-vindo",
-    "welcome_description_text": "Realize o cadastro de sua empresa de forma rapida e agil",
-    "search_submit_button": "Consultar CNPJ",
-    "nif_hint_input": "CNPJ",
+    "welcome_description_text": "Cadastre sua empresa de forma rápida e ágil",
+    "go_request_view": "Realizar consulta de CNPJ",
+    "request_description_text":"Informe seu CNPJ no campo abaixo para realizer um busca rápida de seu cadastro",
+    "request_submit_button": "Consultar CNPJ",
+    "nif_hint_input": "Digite aqui seu CNPJ",
     "no_nif_label_text": "Não possui um CNPJ? ",
-    "no_nif_label_button": "Cadastre aqui"
+    "no_nif_label_button": "Cadastrar sem consulta"
+  },
+  "error": {
+    "required_field": "Campo obrigatório",
+    "invalid_field": "Valor informado inválido",
+    "connection": "Falha na comunicação"
   }
 }

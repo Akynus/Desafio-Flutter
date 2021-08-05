@@ -32,9 +32,13 @@ dependencies:
   http: ^0.13.3
   json_serializable: ^4.0.2
   flutter_masked_text2: ^0.9.1
+  equatable: ^2.0.3
+  flutter_bloc: ^7.1.0
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
   flutter_translate_gen: ^1.2.1
