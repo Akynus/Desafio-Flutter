@@ -1,6 +1,7 @@
 import 'package:challenge_flutter/src/blocs/request/request_bloc.dart';
 import 'package:challenge_flutter/src/resources/theme.dart';
 import 'package:challenge_flutter/src/resources/translate.dart';
+import 'package:challenge_flutter/src/ui/form_ui.dart';
 import 'package:challenge_flutter/src/ui/home_ui.dart';
 import 'package:challenge_flutter/src/ui/request_ui.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,10 @@ class App extends StatelessWidget {
           appBarTheme: AppBarTheme(
             iconTheme: IconThemeData(color: Colors.black54),
             textTheme: TextTheme(
-                headline6: Theme.of(context).textTheme.headline6!.apply(color: Colors.black54)),
+                headline6: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .apply(color: Colors.black54)),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -55,6 +59,7 @@ class App extends StatelessWidget {
         routes: {
           HomeUI.route: (_) => HomeUI(),
           RequestUI.route: (_) => RequestUI(),
+          FormUI.route: (_) => FormUI(),
         },
       ),
     );

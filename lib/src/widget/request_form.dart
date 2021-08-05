@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:challenge_flutter/src/blocs/request/request_bloc.dart';
+import 'package:challenge_flutter/src/models/request_model.dart';
 import 'package:challenge_flutter/src/widget/floating_button_loading.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:challenge_flutter/src/resources/translate.dart';
@@ -11,10 +12,9 @@ import 'package:challenge_flutter/src/utils/extensions.dart';
 
 class RequestForm extends StatefulWidget {
   final VoidCallback onNew;
-  final ValueChanged<dynamic> onData;
+  final ValueChanged<RequestModel> onData;
 
-  const RequestForm({Key? key, required this.onNew, required this.onData})
-      : super(key: key);
+  const RequestForm({Key? key, required this.onNew, required this.onData}) : super(key: key);
 
   @override
   _RequestFormState createState() => _RequestFormState();

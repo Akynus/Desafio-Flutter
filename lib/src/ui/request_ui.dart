@@ -1,3 +1,5 @@
+import 'package:challenge_flutter/src/models/request_model.dart';
+import 'package:challenge_flutter/src/ui/form_ui.dart';
 import 'package:challenge_flutter/src/widget/preview_data.dart';
 import 'package:challenge_flutter/src/widget/request_form.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,13 +15,23 @@ class RequestUI extends StatefulWidget {
 }
 
 class _RequestUIState extends State<RequestUI> {
-  void _onNewCompany() {}
+  void _onNewCompany() {
+    Navigator.pushNamed(context, FormUI.route);
+  }
 
-  void _previewData(dynamic value) async {
+  void _previewData(RequestModel value) async {
     var result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => PreviewData()),
+      MaterialPageRoute(builder: (_) => PreviewData(data: value)),
     );
+
+    if (result == true)
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => FormUI(),
+        ),
+      );
   }
 
   @override

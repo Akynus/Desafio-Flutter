@@ -38,7 +38,7 @@ RequestModel _$RequestModelFromJson(Map<String, dynamic> json) {
     especialSituation: json['situacao_especial'] as String?,
     especialSituationDate: json['data_situacao_especial'] as String?,
     socialValue: json['capital_social'] as String?,
-    partner: (json['qsa'] as List<dynamic>?)
+    partners: (json['qsa'] as List<dynamic>?)
         ?.map((e) => RequestPartnerModel.fromJson(e as Map<String, dynamic>))
         .toList(),
   );
@@ -80,7 +80,7 @@ Map<String, dynamic> _$RequestModelToJson(RequestModel instance) {
   writeNotNull('situacao_especial', instance.especialSituation);
   writeNotNull('data_situacao_especial', instance.especialSituationDate);
   writeNotNull('capital_social', instance.socialValue);
-  writeNotNull('qsa', instance.partner);
+  writeNotNull('qsa', instance.partners);
   return val;
 }
 

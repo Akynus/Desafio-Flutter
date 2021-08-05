@@ -1,9 +1,13 @@
+import 'package:challenge_flutter/src/models/request_model.dart';
 import 'package:challenge_flutter/src/widget/preview_header.dart';
 import 'package:challenge_flutter/src/widget/preview_item.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PreviewData extends StatelessWidget {
-  const PreviewData({Key? key}) : super(key: key);
+  final RequestModel data;
+
+  const PreviewData({Key? key, required this.data}) : super(key: key);
 
   void _useData(BuildContext context) async {
     var cancelBtn = TextButton(
@@ -22,7 +26,7 @@ class PreviewData extends StatelessWidget {
         return alert;
       },
     );
-    print(result);
+    if (result == true) Navigator.pop(context, true);
   }
 
   @override
@@ -45,46 +49,46 @@ class PreviewData extends StatelessWidget {
             children: [
               PreviewHeader(label: "Dados Gerais"),
               PreviewItem(
-                value: 'Razão Social',
+                value: data.name ?? "-",
                 label: 'Razão Social',
               ),
               PreviewItem(
-                value: 'Fantasia',
+                value: data.nickname ?? "-",
                 label: 'Fantasia',
               ),
               PreviewItem(
-                value: '00.000.000/0000-00',
+                value: data.nfi ?? "-",
                 label: 'CNPJ',
               ),
               Row(
                 children: [
                   PreviewItem(
-                    value: 'MATRIZ',
+                    value: describeEnum(data.type ?? "-"),
                     label: 'Tipo',
                   ),
                   PreviewItem(
-                    value: '01/01/2000',
+                    value: data.opening ?? "-",
                     label: 'Data de Abertura',
                   ),
                 ],
               ),
               PreviewHeader(label: "Endereço"),
               PreviewItem(
-                value: 'Logradouro',
+                value: data.address ?? "-",
                 label: 'Logradouro',
               ),
               PreviewItem(
-                value: 'Bairro',
+                value: data.neighborhood ?? "-",
                 label: 'Bairro',
               ),
               Row(
                 children: [
                   PreviewItem(
-                    value: 'Número',
+                    value: data.number ?? "-",
                     label: 'Número',
                   ),
                   PreviewItem(
-                    value: '00.000-000',
+                    value: data.cep ?? "-",
                     label: 'CEP',
                   ),
                 ],
@@ -93,11 +97,11 @@ class PreviewData extends StatelessWidget {
                 children: [
                   PreviewItem(
                     flex: 3,
-                    value: 'Município',
+                    value: data.city ?? "-",
                     label: 'Município',
                   ),
                   PreviewItem(
-                    value: 'UF',
+                    value: data.uf ?? "-",
                     label: 'UF',
                   ),
                 ],
@@ -109,6 +113,7 @@ class PreviewData extends StatelessWidget {
       bottomNavigationBar: SizedBox(height: 50),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: "app_btn",
         onPressed: () => _useData(context),
         label: Text("Cadastrar empresa"),
       ),
