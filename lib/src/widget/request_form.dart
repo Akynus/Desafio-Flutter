@@ -11,8 +11,10 @@ import 'package:challenge_flutter/src/utils/extensions.dart';
 
 class RequestForm extends StatefulWidget {
   final VoidCallback onNew;
+  final ValueChanged<dynamic> onData;
 
-  const RequestForm({Key? key, required this.onNew}) : super(key: key);
+  const RequestForm({Key? key, required this.onNew, required this.onData})
+      : super(key: key);
 
   @override
   _RequestFormState createState() => _RequestFormState();
@@ -27,8 +29,12 @@ class _RequestFormState extends State<RequestForm> {
   void initState() {
     _controller = MaskedTextController(mask: '00.000.000/0000-00');
     _form = GlobalKey();
-    _searchListen = BlocProvider.of<RequestBloc>(context).stream.listen((state) {
-
+    _searchListen =
+        BlocProvider.of<RequestBloc>(context).stream.listen((state) {
+      if (state is RequestDataState) {
+        _controller.text = "";
+        widget.onData(state.data);
+      }
     });
     super.initState();
   }
@@ -40,13 +46,15 @@ class _RequestFormState extends State<RequestForm> {
     super.dispose();
   }
 
-  String? _onValidate(String? text) {
-    if (text == null || text.isEmpty) return translate(Keys.error_required_field);
-    if (text.onlyNumbers.length != 14) return translate(Keys.error_invalid_field);
+  String? _validate(String? text) {
+    if (text == null || text.isEmpty)
+      return translate(Keys.error_required_field);
+    if (text.onlyNumbers.length != 14)
+      return translate(Keys.error_invalid_field);
     return null;
   }
 
-  void _onSubmit() async {
+  void _submit() async {
     FocusScope.of(context).unfocus();
     if (_form.currentState != null && _form.currentState!.validate()) {
       context.read<RequestBloc>().add(RequestDataEvent(_controller.text.onlyNumbers));
@@ -70,16 +78,17 @@ class _RequestFormState extends State<RequestForm> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: translate(Keys.label_nif_hint_input),
-                    errorText: (state is RequestErrorState) ? state.message : null,
+                    errorText:
+                        (state is RequestErrorState) ? state.message : null,
                   ),
                   style: Theme.of(context).textTheme.headline6,
-                  validator: _onValidate,
+                  validator: _validate,
                 ),
                 SizedBox(height: 20),
                 FloatingButtonLoading(
                   heroTag: "app_btn",
                   loading: state is RequestLoadingState,
-                  onPressed: _onSubmit,
+                  onPressed: _submit,
                   icon: Icon(Icons.search),
                   label: Text(translate(Keys.label_request_submit_button)),
                 ),
@@ -96,7 +105,8 @@ class _RequestFormState extends State<RequestForm> {
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                           ),
-                          recognizer: TapGestureRecognizer()..onTap = widget.onNew,
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = widget.onNew,
                         ),
                       ],
                     ),

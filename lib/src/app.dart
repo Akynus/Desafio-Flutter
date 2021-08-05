@@ -26,8 +26,31 @@ class App extends StatelessWidget {
     return _providerBloc(
       child: MaterialApp(
         title: translate(Keys.application_title),
-        theme: theme,
-        localizationsDelegates: [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, localizationDelegate],
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+          fontFamily: "Barlow",
+          scaffoldBackgroundColor: Colors.grey.shade200,
+          cardTheme: CardTheme(
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+          ),
+          appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(color: Colors.black54),
+            textTheme: TextTheme(
+                headline6: Theme.of(context).textTheme.headline6!.apply(color: Colors.black54)),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          inputDecorationTheme: InputDecorationTheme(),
+        ),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          localizationDelegate
+        ],
         initialRoute: HomeUI.route,
         routes: {
           HomeUI.route: (_) => HomeUI(),

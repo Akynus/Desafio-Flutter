@@ -1,4 +1,4 @@
-import 'package:challenge_flutter/src/resources/translate.dart';
+import 'package:challenge_flutter/src/widget/preview_data.dart';
 import 'package:challenge_flutter/src/widget/request_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +15,21 @@ class RequestUI extends StatefulWidget {
 class _RequestUIState extends State<RequestUI> {
   void _onNewCompany() {}
 
+  void _previewData(dynamic value) async {
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => PreviewData()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var keyboardOpened = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
       body: SingleChildScrollView(
-        physics: keyboardOpened ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
+        physics: keyboardOpened
+            ? ClampingScrollPhysics()
+            : NeverScrollableScrollPhysics(),
         child: ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,
@@ -31,12 +40,14 @@ class _RequestUIState extends State<RequestUI> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
-                  child: Center(
+                  child: Hero(
+                    tag: "app_logo",
                     child: FlutterLogo(size: 120),
                   ),
                 ),
                 Expanded(
                   child: RequestForm(
+                    onData: _previewData,
                     onNew: _onNewCompany,
                   ),
                 ),

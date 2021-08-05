@@ -25,7 +25,10 @@ class _HomeUIState extends State<HomeUI> {
           children: [
             Expanded(
               child: Center(
-                child: FlutterLogo(size: 120),
+                child: Hero(
+                  tag: "app_logo",
+                  child: FlutterLogo(size: 120),
+                ),
               ),
             ),
             Expanded(
@@ -33,7 +36,8 @@ class _HomeUIState extends State<HomeUI> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(translate(Keys.label_welcome_title_text), style: Theme.of(context).textTheme.headline2),
+                    Text(translate(Keys.label_welcome_title_text),
+                        style: Theme.of(context).textTheme.headline2),
                     SizedBox(height: 5),
                     Text(
                       translate(Keys.label_welcome_description_text),

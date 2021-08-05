@@ -34,7 +34,7 @@ class RequestModel {
     this.especialSituation,
     this.especialSituationDate,
     this.socialValue,
-    this.partner,
+    this.partners,
   });
 
   @JsonKey(name: "status")
@@ -90,7 +90,7 @@ class RequestModel {
   @JsonKey(name: "capital_social")
   String? socialValue;
   @JsonKey(name: "qsa")
-  List<RequestPartnerModel>? partner;
+  List<RequestPartnerModel>? partners;
 
   factory RequestModel.fromJson(Map<String, dynamic> json) => _$RequestModelFromJson(json);
 
