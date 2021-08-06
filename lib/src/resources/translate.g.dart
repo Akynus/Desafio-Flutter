@@ -13,6 +13,10 @@ class Keys {
 
   static const String label_no_button = 'label.no_button';
 
+  static const String label_edit_button = 'label.edit_button';
+
+  static const String label_remove_button = 'label.remove_button';
+
   static const String label_close_button = 'label.close_button';
 
   static const String label_add_button = 'label.add_button';
@@ -161,6 +165,35 @@ class Keys {
 
   static const String label_form_special_situation_date_label_text =
       'label.form_special_situation_date_label_text';
+
+  static const String label_form_activity_title_text =
+      'label.form_activity_title_text';
+
+  static const String label_form_activity_description_label_text =
+      'label.form_activity_description_label_text';
+
+  static const String label_form_activity_code_label_text =
+      'label.form_activity_code_label_text';
+
+  static const String label_form_partner_title_text =
+      'label.form_partner_title_text';
+
+  static const String label_form_partner_name_label_text =
+      'label.form_partner_name_label_text';
+
+  static const String label_form_partner_type_label_text =
+      'label.form_partner_type_label_text';
+
+  static const String label_form_partner_origin_label_text =
+      'label.form_partner_origin_label_text';
+
+  static const String label_form_partner_legal_name_label_text =
+      'label.form_partner_legal_name_label_text';
+
+  static const String label_form_partner_legal_type_label_text =
+      'label.form_partner_legal_type_label_text';
+
+  static const String label_form_success_save = 'label.form_success_save';
 
   static const String error_required_field = 'error.required_field';
 

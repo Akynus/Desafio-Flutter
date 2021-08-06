@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:challenge_flutter/src/models/request_model.dart';
 import 'package:challenge_flutter/src/resources/translate.dart';
 import 'package:challenge_flutter/src/widget/inputs/text_form_input.dart';
@@ -37,38 +35,39 @@ class _PartnerDialogState extends State<PartnerDialog> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Sócio"),
+        title: Text(translate(Keys.label_form_partner_title_text)),
       ),
       body: Form(
         key: _form,
         child: ListView(
           children: [
             TextFormInput(
-              label: "Nome do sócio",
+              label: translate(Keys.label_form_partner_name_label_text),
               initialValue: _data.name,
               onSaved: (value) => _data.name = value,
               validation: (value) {
-                if (value == null || value.isEmpty) return translate(Keys.error_required_field);
+                if (value == null || value.isEmpty)
+                  return translate(Keys.error_required_field);
                 return null;
               },
             ),
             TextFormInput(
-              label: "Qualificação do sócio",
+              label: translate(Keys.label_form_partner_type_label_text),
               initialValue: _data.type,
               onSaved: (value) => _data.type = value,
             ),
             TextFormInput(
-              label: "País de origem do sócio",
+              label: translate(Keys.label_form_partner_origin_label_text),
               initialValue: _data.originCountry,
               onSaved: (value) => _data.originCountry = value,
             ),
             TextFormInput(
-              label: "Nome do representante legal",
+              label: translate(Keys.label_form_partner_legal_name_label_text),
               initialValue: _data.legalName,
               onSaved: (value) => _data.legalName = value,
             ),
             TextFormInput(
-              label: "Qualificação do representante legal",
+              label: translate(Keys.label_form_partner_legal_type_label_text),
               initialValue: _data.legalType,
               onSaved: (value) => _data.legalType = value,
             ),
@@ -80,7 +79,7 @@ class _PartnerDialogState extends State<PartnerDialog> {
       floatingActionButton: FloatingActionButton.extended(
         heroTag: "app_btn",
         onPressed: _submit,
-        label: Text("Salvar"),
+        label: Text(translate(Keys.label_save_button)),
       ),
     );
   }

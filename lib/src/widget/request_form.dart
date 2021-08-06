@@ -14,7 +14,8 @@ class RequestForm extends StatefulWidget {
   final VoidCallback onNew;
   final ValueChanged<RequestModel> onData;
 
-  const RequestForm({Key? key, required this.onNew, required this.onData}) : super(key: key);
+  const RequestForm({Key? key, required this.onNew, required this.onData})
+      : super(key: key);
 
   @override
   _RequestFormState createState() => _RequestFormState();
@@ -29,8 +30,8 @@ class _RequestFormState extends State<RequestForm> {
   void initState() {
     _controller = MaskedTextController(mask: '00.000.000/0000-00');
     _form = GlobalKey();
-    _searchListen =
-        BlocProvider.of<RequestBloc>(context).stream.listen((state) {
+
+    _searchListen = BlocProvider.of<RequestBloc>(context).stream.listen((state) {
       if (state is RequestDataState) {
         _controller.text = "";
         widget.onData(state.data);
@@ -57,7 +58,9 @@ class _RequestFormState extends State<RequestForm> {
   void _submit() async {
     FocusScope.of(context).unfocus();
     if (_form.currentState != null && _form.currentState!.validate()) {
-      context.read<RequestBloc>().add(RequestDataEvent(_controller.text.onlyNumbers));
+      context
+          .read<RequestBloc>()
+          .add(RequestDataEvent(_controller.text.onlyNumbers));
     }
   }
 

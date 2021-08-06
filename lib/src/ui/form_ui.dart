@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:challenge_flutter/src/blocs/company/company_bloc.dart';
 import 'package:challenge_flutter/src/models/request_model.dart';
 import 'package:challenge_flutter/src/resources/translate.dart';
 import 'package:challenge_flutter/src/widget/activity_card.dart';
@@ -8,7 +11,9 @@ import 'package:challenge_flutter/src/widget/inputs/datepicker_form_input.dart';
 import 'package:challenge_flutter/src/widget/inputs/dropdown_form_input.dart';
 import 'package:challenge_flutter/src/widget/inputs/text_form_input.dart';
 import 'package:challenge_flutter/src/widget/partner_card.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:challenge_flutter/src/utils/extensions.dart';
 
@@ -28,6 +33,7 @@ class _FormUIState extends State<FormUI> {
   late GlobalKey<FormState> _form;
   late TextEditingController _nifController;
   late TextEditingController _cepController;
+  late StreamSubscription _streamListener;
 
   @override
   void initState() {
@@ -49,16 +55,34 @@ class _FormUIState extends State<FormUI> {
       text: _data.cep,
     );
 
+    context.read<CompanyBloc>().add(CompanyResetEvent());
+
+    _streamListener =
+        BlocProvider.of<CompanyBloc>(context).stream.listen((state) {
+      if (state is CompanySuccessState) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(translate(Keys.label_form_success_save)),
+        ));
+      }
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _streamListener.cancel();
+    super.dispose();
   }
 
   Future<bool> _willPop() async {
     var cancelBtn = TextButton(
         onPressed: () => Navigator.pop(context, false),
-        child: Text(translate(Keys.label_yes_button)));
+        child: Text(translate(Keys.label_no_button)));
     var confirmBtn = TextButton(
         onPressed: () => Navigator.pop(context, true),
-        child: Text(translate(Keys.label_no_button)));
+        child: Text(translate(Keys.label_yes_button)));
 
     var alert = AlertDialog(
       title: Text(translate(Keys.label_form_dialog_title_text)),
@@ -93,7 +117,7 @@ class _FormUIState extends State<FormUI> {
   String? _validUf(String? value) {
     if (value == null || value.isEmpty)
       return translate(Keys.error_required_field);
-    if (value.onlyNumbers.length != 2)
+    if (value.length != 2)
       return translate(Keys.error_invalid_field);
     return null;
   }
@@ -185,6 +209,7 @@ class _FormUIState extends State<FormUI> {
   void _submit() {
     if (_form.currentState != null && _form.currentState!.validate()) {
       _form.currentState!.save();
+      context.read<CompanyBloc>().add(CompanySaveEvent(_data));
     }
   }
 
@@ -192,284 +217,298 @@ class _FormUIState extends State<FormUI> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _willPop,
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 70,
-          centerTitle: true,
-          title: Text(translate(Keys.label_form_title_text)),
-        ),
-        body: Form(
-          key: _form,
-          child: ListView(
-            children: [
-              ExpansionTile(
-                initiallyExpanded: true,
-                title: Text(translate(Keys.label_form_general_header_text),
-                    style: Theme.of(context).textTheme.headline6),
-                childrenPadding: EdgeInsets.all(20),
+      child: BlocBuilder<CompanyBloc, CompanyState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 70,
+              centerTitle: true,
+              title: Text(translate(Keys.label_form_title_text)),
+            ),
+            body: Form(
+              key: _form,
+              child: ListView(
                 children: [
-                  TextFormInput(
-                    label: translate(Keys.label_form_name_label_text),
-                    initialValue: _data.name,
-                    validation: _validIsNull,
-                    onSaved: (value) => _data.name = value,
-                  ),
-                  TextFormInput(
-                    label: translate(Keys.label_form_nickname_label_text),
-                    initialValue: _data.nickname,
-                    validation: _validIsNull,
-                    onSaved: (value) => _data.nickname = value,
-                  ),
-                  TextFormInput(
-                    label: translate(Keys.label_form_nfi_label_text),
-                    keyboardType: TextInputType.number,
-                    validation: _validNfi,
-                    onSaved: (value) => _data.nfi = value,
-                    controller: _nifController,
-                  ),
-                  Row(
+                  ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(translate(Keys.label_form_general_header_text),
+                        style: Theme.of(context).textTheme.headline6),
+                    childrenPadding: EdgeInsets.all(20),
                     children: [
-                      Expanded(
-                        child: DropdownFormInput<Type?>(
-                          label: translate(Keys.label_form_type_label_text),
-                          value: _data.type,
-                          onChange: (value) => _data.type = value,
-                          items: [
-                            DropdownMenuItem(
-                              value: Type.MATRIZ,
-                              child: Text("MATRIZ"),
-                            ),
-                            DropdownMenuItem(
-                              value: Type.FILIAL,
-                              child: Text("FILIAL"),
-                            ),
-                          ],
-                        ),
+                      TextFormInput(
+                        label: translate(Keys.label_form_name_label_text),
+                        initialValue: _data.name,
+                        validation: _validIsNull,
+                        onSaved: (value) => _data.name = value,
                       ),
-                      Expanded(
-                        child: DatePickerFormInput(
-                          label: "Data de Abertura",
-                          value: _data.opening,
-                          onChange: (value) => setState(() {
-                            _data.opening = value;
-                          }),
-                        ),
+                      TextFormInput(
+                        label: translate(Keys.label_form_nickname_label_text),
+                        initialValue: _data.nickname,
+                        validation: _validIsNull,
+                        onSaved: (value) => _data.nickname = value,
+                      ),
+                      TextFormInput(
+                        label: translate(Keys.label_form_nfi_label_text),
+                        keyboardType: TextInputType.number,
+                        validation: _validNfi,
+                        onSaved: (value) => _data.nfi = value,
+                        controller: _nifController,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownFormInput<Type?>(
+                              label: translate(Keys.label_form_type_label_text),
+                              value: _data.type,
+                              onChange: (value) => _data.type = value,
+                              items: [
+                                DropdownMenuItem(
+                                  value: Type.MATRIZ,
+                                  child: Text(describeEnum(Type.MATRIZ)),
+                                ),
+                                DropdownMenuItem(
+                                  value: Type.FILIAL,
+                                  child: Text(describeEnum(Type.FILIAL)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: DatePickerFormInput(
+                              label: translate(Keys.label_form_opening_label_text),
+                              value: _data.opening,
+                              onChange: (value) => setState(() {
+                                _data.opening = value;
+                              }),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              ExpansionTile(
-                initiallyExpanded: true,
-                title: Text(translate(Keys.label_form_address_header_text),
-                    style: Theme.of(context).textTheme.headline6),
-                childrenPadding: EdgeInsets.all(20),
-                children: [
-                  TextFormInput(
-                    label: translate(Keys.label_form_address_label_text),
-                    initialValue: _data.address,
-                    validation: _validIsNull,
-                    onSaved: (value) => _data.address = value,
-                  ),
-                  TextFormInput(
-                    label: translate(Keys.label_form_neighborhood_label_text),
-                    initialValue: _data.neighborhood,
-                    validation: _validIsNull,
-                    onSaved: (value) => _data.neighborhood = value,
-                  ),
-                  Row(
+                  ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(translate(Keys.label_form_address_header_text),
+                        style: Theme.of(context).textTheme.headline6),
+                    childrenPadding: EdgeInsets.all(20),
                     children: [
-                      Expanded(
-                        child: TextFormInput(
-                          label: translate(Keys.label_form_number_label_text),
-                          initialValue: _data.number,
-                          validation: _validIsNull,
-                          onSaved: (value) => _data.number = value,
-                        ),
+                      TextFormInput(
+                        label: translate(Keys.label_form_address_label_text),
+                        initialValue: _data.address,
+                        validation: _validIsNull,
+                        onSaved: (value) => _data.address = value,
                       ),
-                      Expanded(
-                        child: TextFormInput(
-                            label: translate(Keys.label_form_cep_label_text),
-                            keyboardType: TextInputType.number,
-                            controller: _cepController),
+                      TextFormInput(
+                        label:
+                            translate(Keys.label_form_neighborhood_label_text),
+                        initialValue: _data.neighborhood,
+                        validation: _validIsNull,
+                        onSaved: (value) => _data.neighborhood = value,
                       ),
-                    ],
-                  ),
-                  TextFormInput(
-                    label: translate(Keys.label_form_complement_label_text),
-                    initialValue: _data.complement,
-                    onSaved: (value) => _data.complement = value,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: TextFormInput(
-                            label: translate(Keys.label_form_city_label_text),
-                            initialValue: _data.city,
-                            validation: _validIsNull,
-                            onSaved: (value) => _data.city = value,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormInput(
+                              label:
+                                  translate(Keys.label_form_number_label_text),
+                              initialValue: _data.number,
+                              validation: _validIsNull,
+                              onSaved: (value) => _data.number = value,
+                            ),
+                          ),
+                          Expanded(
+                            child: TextFormInput(
+                                label:
+                                    translate(Keys.label_form_cep_label_text),
+                                keyboardType: TextInputType.number,
+                                controller: _cepController),
+                          ),
+                        ],
+                      ),
+                      TextFormInput(
+                        label: translate(Keys.label_form_complement_label_text),
+                        initialValue: _data.complement,
+                        onSaved: (value) => _data.complement = value,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              flex: 2,
+                              child: TextFormInput(
+                                label:
+                                    translate(Keys.label_form_city_label_text),
+                                initialValue: _data.city,
+                                validation: _validIsNull,
+                                onSaved: (value) => _data.city = value,
+                              )),
+                          Expanded(
+                              child: TextFormInput(
+                            label: translate(Keys.label_form_uf_label_text),
+                            initialValue: _data.uf,
+                            validation: _validUf,
+                            onSaved: (value) => _data.uf = value,
                           )),
-                      Expanded(
-                          child: TextFormInput(
-                        label: translate(Keys.label_form_uf_label_text),
-                        initialValue: _data.uf,
-                        validation: _validUf,
-                        onSaved: (value) => _data.uf = value,
-                      )),
+                        ],
+                      ),
+                      TextFormInput(
+                        label: translate(Keys.label_form_email_label_text),
+                        keyboardType: TextInputType.emailAddress,
+                        initialValue: _data.email,
+                        onSaved: (value) => _data.email = value,
+                      ),
+                      TextFormInput(
+                        label: translate(Keys.label_form_phone_label_text),
+                        keyboardType: TextInputType.phone,
+                        initialValue: _data.phone,
+                        onSaved: (value) => _data.phone = value,
+                      ),
                     ],
                   ),
-                  TextFormInput(
-                    label: translate(Keys.label_form_email_label_text),
-                    keyboardType: TextInputType.emailAddress,
-                    initialValue: _data.email,
-                    onSaved: (value) => _data.email = value,
+                  ExpansionTile(
+                    title: Text(
+                        translate(Keys.label_form_situation_header_text),
+                        style: Theme.of(context).textTheme.headline6),
+                    childrenPadding: EdgeInsets.all(20),
+                    children: [
+                      TextFormInput(
+                        label: translate(Keys.label_form_situation_label_text),
+                        initialValue: _data.situation,
+                        onSaved: (value) => _data.situation = value,
+                      ),
+                      DatePickerFormInput(
+                        label: translate(
+                            Keys.label_form_situation_date_label_text),
+                        value: _data.situationDate,
+                        onChange: (value) => setState(() {
+                          _data.situationDate = value;
+                        }),
+                      ),
+                      TextFormInput(
+                        label: translate(
+                            Keys.label_form_special_situation_label_text),
+                        initialValue: _data.especialSituation,
+                        onSaved: (value) => _data.especialSituation = value,
+                      ),
+                      DatePickerFormInput(
+                        label: translate(
+                            Keys.label_form_special_situation_date_label_text),
+                        value: _data.especialSituationDate,
+                        onChange: (value) => setState(() {
+                          _data.especialSituationDate = value;
+                        }),
+                      ),
+                    ],
                   ),
-                  TextFormInput(
-                    label: translate(Keys.label_form_phone_label_text),
-                    keyboardType: TextInputType.phone,
-                    initialValue: _data.phone,
-                    onSaved: (value) => _data.phone = value,
+                  ExpansionTile(
+                    title: Text(translate(Keys.label_form_partners_header_text),
+                        style: Theme.of(context).textTheme.headline6),
+                    childrenPadding: EdgeInsets.all(20),
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        primary: false,
+                        itemBuilder: (context, index) {
+                          return PartnerCard(
+                            data: _data.partners![index],
+                            onEdit: () => _editPartner(index),
+                            onRemove: () => _removePartner(index),
+                          );
+                        },
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 5),
+                        itemCount: _data.partners!.length,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton.icon(
+                          icon: Icon(Icons.add),
+                          onPressed: () => _editPartner(null),
+                          label: Text(translate(Keys.label_add_button)),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              ExpansionTile(
-                title: Text(translate(Keys.label_form_situation_header_text),
-                    style: Theme.of(context).textTheme.headline6),
-                childrenPadding: EdgeInsets.all(20),
-                children: [
-                  TextFormInput(
-                    label: translate(Keys.label_form_situation_label_text),
-                    initialValue: _data.situation,
-                    onSaved: (value) => _data.situation = value,
+                  ExpansionTile(
+                    title: Text(
+                        translate(Keys.label_form_main_activities_header_text),
+                        style: Theme.of(context).textTheme.headline6),
+                    childrenPadding: EdgeInsets.all(20),
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        primary: false,
+                        itemBuilder: (context, index) {
+                          return ActivityCard(
+                            data: _data.mainActivities![index],
+                            onEdit: () => _editMainActivity(index),
+                            onRemove: () => _removeMainActivity(index),
+                          );
+                        },
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 5),
+                        itemCount: _data.mainActivities!.length,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton.icon(
+                          icon: Icon(Icons.add),
+                          onPressed: () => _editMainActivity(null),
+                          label: Text(translate(Keys.label_add_button)),
+                        ),
+                      ),
+                    ],
                   ),
-                  DatePickerFormInput(
-                    label: translate(Keys.label_form_situation_date_label_text),
-                    value: _data.situationDate,
-                    onChange: (value) => setState(() {
-                      _data.situationDate = value;
-                    }),
-                  ),
-                  TextFormInput(
-                    label:
-                        translate(Keys.label_form_special_situation_label_text),
-                    initialValue: _data.especialSituation,
-                    onSaved: (value) => _data.especialSituation = value,
-                  ),
-                  DatePickerFormInput(
-                    label: translate(
-                        Keys.label_form_special_situation_date_label_text),
-                    value: _data.especialSituationDate,
-                    onChange: (value) => setState(() {
-                      _data.especialSituationDate = value;
-                    }),
-                  ),
-                ],
-              ),
-              ExpansionTile(
-                title: Text(translate(Keys.label_form_partners_header_text),
-                    style: Theme.of(context).textTheme.headline6),
-                childrenPadding: EdgeInsets.all(20),
-                children: [
-                  ListView.separated(
-                    shrinkWrap: true,
-                    primary: false,
-                    itemBuilder: (context, index) {
-                      return PartnerCard(
-                        data: _data.partners![index],
-                        onEdit: () => _editPartner(index),
-                        onRemove: () => _removePartner(index),
-                      );
-                    },
-                    separatorBuilder: (context, index) => SizedBox(height: 5),
-                    itemCount: _data.partners!.length,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton.icon(
-                      icon: Icon(Icons.add),
-                      onPressed: () => _editPartner(null),
-                      label: Text("Adicionar"),
-                    ),
-                  ),
-                ],
-              ),
-              ExpansionTile(
-                title: Text(
-                    translate(Keys.label_form_main_activities_header_text),
-                    style: Theme.of(context).textTheme.headline6),
-                childrenPadding: EdgeInsets.all(20),
-                children: [
-                  ListView.separated(
-                    shrinkWrap: true,
-                    primary: false,
-                    itemBuilder: (context, index) {
-                      return ActivityCard(
-                        data: _data.mainActivities![index],
-                        onEdit: () => _editMainActivity(index),
-                        onRemove: () => _removeMainActivity(index),
-                      );
-                    },
-                    separatorBuilder: (context, index) => SizedBox(height: 5),
-                    itemCount: _data.mainActivities!.length,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton.icon(
-                      icon: Icon(Icons.add),
-                      onPressed: () => _editMainActivity(null),
-                      label: Text(translate(Keys.label_add_button)),
-                    ),
-                  ),
-                ],
-              ),
-              ExpansionTile(
-                title: Text(
-                    translate(Keys.label_form_alt_activities_header_text),
-                    style: Theme.of(context).textTheme.headline6),
-                childrenPadding: EdgeInsets.all(20),
-                children: [
-                  ListView.separated(
-                    shrinkWrap: true,
-                    primary: false,
-                    itemBuilder: (context, index) {
-                      return ActivityCard(
-                        data: _data.altActivities![index],
-                        onEdit: () => _editAltActivity(index),
-                        onRemove: () => _removeAltActivity(index),
-                      );
-                    },
-                    separatorBuilder: (context, index) => SizedBox(height: 5),
-                    itemCount: _data.altActivities!.length,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton.icon(
-                      icon: Icon(Icons.add),
-                      onPressed: () => _editAltActivity(null),
-                      label: Text(translate(Keys.label_add_button)),
-                    ),
+                  ExpansionTile(
+                    title: Text(
+                        translate(Keys.label_form_alt_activities_header_text),
+                        style: Theme.of(context).textTheme.headline6),
+                    childrenPadding: EdgeInsets.all(20),
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        primary: false,
+                        itemBuilder: (context, index) {
+                          return ActivityCard(
+                            data: _data.altActivities![index],
+                            onEdit: () => _editAltActivity(index),
+                            onRemove: () => _removeAltActivity(index),
+                          );
+                        },
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 5),
+                        itemCount: _data.altActivities!.length,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton.icon(
+                          icon: Icon(Icons.add),
+                          onPressed: () => _editAltActivity(null),
+                          label: Text(translate(Keys.label_add_button)),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Row(
-          children: [
-            Spacer(),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: FloatingButtonLoading(
-                  heroTag: "app_btn",
-                  onPressed: _submit,
-                  label: Text(translate(Keys.label_save_button)),
-                ),
               ),
             ),
-          ],
-        ),
+            bottomNavigationBar: Row(
+              children: [
+                Spacer(),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: FloatingButtonLoading(
+                      loading: state is CompanyLoadingState,
+                      heroTag: "app_btn",
+                      onPressed: _submit,
+                      label: Text(translate(Keys.label_save_button)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

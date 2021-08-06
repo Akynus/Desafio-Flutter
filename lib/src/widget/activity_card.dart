@@ -1,4 +1,5 @@
 import 'package:challenge_flutter/src/models/request_model.dart';
+import 'package:challenge_flutter/src/resources/translate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -34,8 +35,8 @@ class ActivityCard extends StatelessWidget {
         },
         itemBuilder: (BuildContext context) {
           return [
-            PopupMenuItem(value: _EventType.EDIT, child: Text("Editar")),
-            PopupMenuItem(value: _EventType.REMOVE, child: Text("Remover")),
+            PopupMenuItem(value: _EventType.EDIT, child: Text(translate(Keys.label_edit_button))),
+            PopupMenuItem(value: _EventType.REMOVE, child: Text(translate(Keys.label_remove_button))),
           ];
         },
       ),

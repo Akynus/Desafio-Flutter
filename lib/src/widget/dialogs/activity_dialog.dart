@@ -22,7 +22,8 @@ class _ActivityDialogState extends State<ActivityDialog> {
   void initState() {
     _data = widget.data ?? RequestActivityModel();
     _form = GlobalKey();
-    _codeController = MaskedTextController(mask: '00.00-0-00', text: _data.code);
+    _codeController =
+        MaskedTextController(mask: '00.00-0-00', text: _data.code);
     super.initState();
   }
 
@@ -38,27 +39,29 @@ class _ActivityDialogState extends State<ActivityDialog> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Atividade"),
+        title: Text(translate(Keys.label_form_activity_title_text)),
       ),
       body: Form(
         key: _form,
         child: ListView(
           children: [
             TextFormInput(
-              label: "Descrição da atividade",
+              label: translate(Keys.label_form_activity_description_label_text),
               initialValue: _data.description,
               onSaved: (value) => _data.description = value,
               validation: (value) {
-                if (value == null || value.isEmpty) return translate(Keys.error_required_field);
+                if (value == null || value.isEmpty)
+                  return translate(Keys.error_required_field);
                 return null;
               },
             ),
             TextFormInput(
-              label: "Código CNAE da atividade",
+              label: translate(Keys.label_form_activity_code_label_text),
               controller: _codeController,
               onSaved: (value) => _data.description = value,
               validation: (value) {
-                if (value == null || value.isEmpty) return translate(Keys.error_required_field);
+                if (value == null || value.isEmpty)
+                  return translate(Keys.error_required_field);
                 return null;
               },
             ),
@@ -70,7 +73,7 @@ class _ActivityDialogState extends State<ActivityDialog> {
       floatingActionButton: FloatingActionButton.extended(
         heroTag: "app_btn",
         onPressed: _submit,
-        label: Text("Salvar"),
+        label: Text(translate(Keys.label_save_button)),
       ),
     );
   }

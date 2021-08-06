@@ -18,13 +18,13 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
         yield _loading();
         break;
       case RequestErrorEvent:
-        var _event = event as RequestErrorEvent;
-        yield _error(_event.message);
+        event as RequestErrorEvent;
+        yield _error(event.message);
         break;
       case RequestDataEvent:
-        var _event = event as RequestDataEvent;
+        event as RequestDataEvent;
         yield _loading();
-        yield await _getData(_event.nfi);
+        yield await _getData(event.nfi);
         break;
       default:
         yield state;

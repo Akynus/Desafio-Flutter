@@ -1,3 +1,4 @@
+import 'package:challenge_flutter/src/blocs/company/company_bloc.dart';
 import 'package:challenge_flutter/src/blocs/request/request_bloc.dart';
 import 'package:challenge_flutter/src/resources/theme.dart';
 import 'package:challenge_flutter/src/resources/translate.dart';
@@ -15,6 +16,7 @@ class App extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(create: (_) => RequestBloc()),
+        RepositoryProvider(create: (_) => CompanyBloc()),
       ],
       child: child,
     );
