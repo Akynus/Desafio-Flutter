@@ -29,7 +29,7 @@ class _RequestUIState extends State<RequestUI> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => FormUI(),
+          builder: (_) => FormUI(data: value),
         ),
       );
   }
@@ -39,9 +39,7 @@ class _RequestUIState extends State<RequestUI> {
     var keyboardOpened = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
       body: SingleChildScrollView(
-        physics: keyboardOpened
-            ? ClampingScrollPhysics()
-            : NeverScrollableScrollPhysics(),
+        physics: keyboardOpened ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
         child: ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,

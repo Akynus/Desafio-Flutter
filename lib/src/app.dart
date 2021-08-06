@@ -39,22 +39,21 @@ class App extends StatelessWidget {
           ),
           appBarTheme: AppBarTheme(
             iconTheme: IconThemeData(color: Colors.black54),
-            textTheme: TextTheme(
-                headline6: Theme.of(context)
-                    .textTheme
-                    .headline6!
-                    .apply(color: Colors.black54)),
+            textTheme: TextTheme(headline6: Theme.of(context).textTheme.headline6!.apply(color: Colors.black54)),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
-          inputDecorationTheme: InputDecorationTheme(),
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            contentPadding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+            border: UnderlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              borderSide: BorderSide.none
+            ),
+          ),
         ),
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          localizationDelegate
-        ],
+        localizationsDelegates: [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, localizationDelegate],
         initialRoute: HomeUI.route,
         routes: {
           HomeUI.route: (_) => HomeUI(),
