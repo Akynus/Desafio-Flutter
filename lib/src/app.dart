@@ -20,6 +20,54 @@ class App extends StatelessWidget {
     );
   }
 
+  ThemeData _theme(BuildContext context) {
+    return ThemeData(
+      primarySwatch: Colors.indigo,
+      fontFamily: "Barlow",
+      scaffoldBackgroundColor: Colors.grey.shade200,
+      cardTheme: CardTheme(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(17)),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(34),
+            ),
+          ),
+        ),
+      ),
+      appBarTheme: AppBarTheme(
+        iconTheme: IconThemeData(color: Colors.black54),
+        textTheme: TextTheme(
+            headline6: Theme.of(context)
+                .textTheme
+                .headline6!
+                .apply(color: Colors.black54)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        contentPadding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 10,
+          bottom: 10,
+        ),
+        border: UnderlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var localizationDelegate = LocalizedApp.of(context).delegate;
@@ -27,33 +75,12 @@ class App extends StatelessWidget {
     return _providerBloc(
       child: MaterialApp(
         title: translate(Keys.application_title),
-        theme: ThemeData(
-          primarySwatch: Colors.indigo,
-          fontFamily: "Barlow",
-          scaffoldBackgroundColor: Colors.grey.shade200,
-          cardTheme: CardTheme(
-            elevation: 5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-          ),
-          appBarTheme: AppBarTheme(
-            iconTheme: IconThemeData(color: Colors.black54),
-            textTheme: TextTheme(headline6: Theme.of(context).textTheme.headline6!.apply(color: Colors.black54)),
-            centerTitle: true,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            contentPadding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-            border: UnderlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
-              borderSide: BorderSide.none
-            ),
-          ),
-        ),
-        localizationsDelegates: [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, localizationDelegate],
+        theme: _theme(context),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          localizationDelegate
+        ],
         initialRoute: HomeUI.route,
         routes: {
           HomeUI.route: (_) => HomeUI(),

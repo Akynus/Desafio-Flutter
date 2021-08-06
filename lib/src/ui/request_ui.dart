@@ -1,6 +1,6 @@
 import 'package:challenge_flutter/src/models/request_model.dart';
 import 'package:challenge_flutter/src/ui/form_ui.dart';
-import 'package:challenge_flutter/src/widget/preview_data.dart';
+import 'package:challenge_flutter/src/widget/dialogs/preview_dialog.dart';
 import 'package:challenge_flutter/src/widget/request_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class _RequestUIState extends State<RequestUI> {
   void _previewData(RequestModel value) async {
     var result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => PreviewData(data: value)),
+      MaterialPageRoute(builder: (_) => PreviewDialog(data: value)),
     );
 
     if (result == true)

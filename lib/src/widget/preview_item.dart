@@ -17,7 +17,7 @@ class PreviewItem extends StatelessWidget {
     return Flexible(
       flex: flex,
       child: Card(
-        elevation: 1,
+        elevation: 0,
         child: ListTile(
           title: Text(
             label,

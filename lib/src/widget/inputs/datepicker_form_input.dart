@@ -17,7 +17,7 @@ class DatePickerFormInput extends StatelessWidget {
   void _openDatePicker(BuildContext context) async {
     late DateTime initial;
 
-    if (value != null) {
+    if (!_isEmpty()) {
       final format = new DateFormat('dd/MM/yyyy');
       initial = format.parse(value!);
     } else {
@@ -36,6 +36,10 @@ class DatePickerFormInput extends StatelessWidget {
     if (datetime == null) onChange(null);
   }
 
+  bool _isEmpty(){
+    return value == null || (value ?? "").isEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -43,7 +47,7 @@ class DatePickerFormInput extends StatelessWidget {
       child: InkWell(
         onTap: () => _openDatePicker(context),
         child: InputDecorator(
-          isEmpty: value == null,
+          isEmpty: _isEmpty(),
           decoration: InputDecoration(labelText: label),
           child: Text(value ?? ""),
         ),

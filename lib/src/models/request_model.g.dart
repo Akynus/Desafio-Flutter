@@ -29,7 +29,7 @@ RequestModel _$RequestModelFromJson(Map<String, dynamic> json) {
     neighborhood: json['bairro'] as String?,
     city: json['municipio'] as String?,
     uf: json['uf'] as String?,
-    email: json['emil'] as String?,
+    email: json['email'] as String?,
     phone: json['telefone'] as String?,
     efr: json['efr'] as String?,
     situation: json['situacao'] as String?,
@@ -71,7 +71,7 @@ Map<String, dynamic> _$RequestModelToJson(RequestModel instance) {
   writeNotNull('bairro', instance.neighborhood);
   writeNotNull('municipio', instance.city);
   writeNotNull('uf', instance.uf);
-  writeNotNull('emil', instance.email);
+  writeNotNull('email', instance.email);
   writeNotNull('telefone', instance.phone);
   writeNotNull('efr', instance.efr);
   writeNotNull('situacao', instance.situation);

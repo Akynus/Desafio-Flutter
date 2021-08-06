@@ -10,7 +10,7 @@ class PreviewHeader extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Padding(
-        padding: EdgeInsets.only(top: 40, bottom: 10),
+        padding: EdgeInsets.only(top: 20, bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

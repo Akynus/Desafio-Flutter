@@ -71,7 +71,7 @@ class RequestModel {
   String? city;
   @JsonKey(name: "uf")
   String? uf;
-  @JsonKey(name: "emil")
+  @JsonKey(name: "email")
   String? email;
   @JsonKey(name: "telefone")
   String? phone;

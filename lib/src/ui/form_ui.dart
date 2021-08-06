@@ -1,8 +1,9 @@
 import 'package:challenge_flutter/src/models/request_model.dart';
 import 'package:challenge_flutter/src/resources/translate.dart';
 import 'package:challenge_flutter/src/widget/activity_card.dart';
-import 'package:challenge_flutter/src/widget/dialog/activity_dialog.dart';
-import 'package:challenge_flutter/src/widget/dialog/partner_dialog.dart';
+import 'package:challenge_flutter/src/widget/dialogs/activity_dialog.dart';
+import 'package:challenge_flutter/src/widget/dialogs/partner_dialog.dart';
+import 'package:challenge_flutter/src/widget/floating_button_loading.dart';
 import 'package:challenge_flutter/src/widget/inputs/datepicker_form_input.dart';
 import 'package:challenge_flutter/src/widget/inputs/dropdown_form_input.dart';
 import 'package:challenge_flutter/src/widget/inputs/text_form_input.dart';
@@ -30,20 +31,38 @@ class _FormUIState extends State<FormUI> {
 
   @override
   void initState() {
-    _data = widget.data ?? RequestModel(status: Status.OK, type: Type.MATRIZ, partners: [], altActivities: [], mainActivities: []);
+    _data = widget.data ??
+        RequestModel(
+          status: Status.OK,
+          type: Type.MATRIZ,
+          partners: [],
+          altActivities: [],
+          mainActivities: [],
+        );
     _form = GlobalKey();
-    _nifController = MaskedTextController(mask: '00.000.000/0000-00', text: _data.nfi);
-    _cepController = MaskedTextController(mask: '00.000-000', text: _data.cep);
+    _nifController = MaskedTextController(
+      mask: '00.000.000/0000-00',
+      text: _data.nfi,
+    );
+    _cepController = MaskedTextController(
+      mask: '00.000-000',
+      text: _data.cep,
+    );
+
     super.initState();
   }
 
   Future<bool> _willPop() async {
-    var cancelBtn = TextButton(onPressed: () => Navigator.pop(context, false), child: Text("Não"));
-    var confirmBtn = TextButton(onPressed: () => Navigator.pop(context, true), child: Text("Sim"));
+    var cancelBtn = TextButton(
+        onPressed: () => Navigator.pop(context, false),
+        child: Text(translate(Keys.label_yes_button)));
+    var confirmBtn = TextButton(
+        onPressed: () => Navigator.pop(context, true),
+        child: Text(translate(Keys.label_no_button)));
 
     var alert = AlertDialog(
-      title: Text("Fechar formulário"),
-      content: Text("As informações preenchidas serão perdidas. Deseja continuar?"),
+      title: Text(translate(Keys.label_form_dialog_title_text)),
+      content: Text(translate(Keys.label_form_dialog_description_text)),
       actions: [cancelBtn, confirmBtn],
     );
 
@@ -58,19 +77,24 @@ class _FormUIState extends State<FormUI> {
   }
 
   String? _validIsNull(String? value) {
-    if (value == null || value.isEmpty) return translate(Keys.error_required_field);
+    if (value == null || value.isEmpty)
+      return translate(Keys.error_required_field);
     return null;
   }
 
   String? _validNfi(String? value) {
-    if (value == null || value.isEmpty) return translate(Keys.error_required_field);
-    if (value.onlyNumbers.length != 14) return translate(Keys.error_invalid_field);
+    if (value == null || value.isEmpty)
+      return translate(Keys.error_required_field);
+    if (value.onlyNumbers.length != 14)
+      return translate(Keys.error_invalid_field);
     return null;
   }
 
   String? _validUf(String? value) {
-    if (value == null || value.isEmpty) return translate(Keys.error_required_field);
-    if (value.onlyNumbers.length != 2) return translate(Keys.error_invalid_field);
+    if (value == null || value.isEmpty)
+      return translate(Keys.error_required_field);
+    if (value.onlyNumbers.length != 2)
+      return translate(Keys.error_invalid_field);
     return null;
   }
 
@@ -81,7 +105,8 @@ class _FormUIState extends State<FormUI> {
     } else {
       object = RequestPartnerModel();
     }
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (_) => PartnerDialog(data: object)));
+    var result = await Navigator.push(context,
+        MaterialPageRoute(builder: (_) => PartnerDialog(data: object)));
 
     if (result == null) return;
 
@@ -108,7 +133,8 @@ class _FormUIState extends State<FormUI> {
     } else {
       object = RequestActivityModel();
     }
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityDialog(data: object)));
+    var result = await Navigator.push(context,
+        MaterialPageRoute(builder: (_) => ActivityDialog(data: object)));
 
     if (result == null) return;
 
@@ -135,7 +161,8 @@ class _FormUIState extends State<FormUI> {
     } else {
       object = RequestActivityModel();
     }
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityDialog(data: object)));
+    var result = await Navigator.push(context,
+        MaterialPageRoute(builder: (_) => ActivityDialog(data: object)));
 
     if (result == null) return;
 
@@ -155,6 +182,12 @@ class _FormUIState extends State<FormUI> {
     });
   }
 
+  void _submit() {
+    if (_form.currentState != null && _form.currentState!.validate()) {
+      _form.currentState!.save();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -163,7 +196,7 @@ class _FormUIState extends State<FormUI> {
         appBar: AppBar(
           toolbarHeight: 70,
           centerTitle: true,
-          title: Text("Formulário"),
+          title: Text(translate(Keys.label_form_title_text)),
         ),
         body: Form(
           key: _form,
@@ -171,23 +204,25 @@ class _FormUIState extends State<FormUI> {
             children: [
               ExpansionTile(
                 initiallyExpanded: true,
-                title: Text("Dados Fiscais", style: Theme.of(context).textTheme.headline6),
+                title: Text(translate(Keys.label_form_general_header_text),
+                    style: Theme.of(context).textTheme.headline6),
                 childrenPadding: EdgeInsets.all(20),
                 children: [
                   TextFormInput(
-                    label: "Razão Social",
+                    label: translate(Keys.label_form_name_label_text),
                     initialValue: _data.name,
                     validation: _validIsNull,
                     onSaved: (value) => _data.name = value,
                   ),
                   TextFormInput(
-                    label: "Fantasia",
+                    label: translate(Keys.label_form_nickname_label_text),
                     initialValue: _data.nickname,
                     validation: _validIsNull,
                     onSaved: (value) => _data.nickname = value,
                   ),
                   TextFormInput(
-                    label: "CNPJ",
+                    label: translate(Keys.label_form_nfi_label_text),
+                    keyboardType: TextInputType.number,
                     validation: _validNfi,
                     onSaved: (value) => _data.nfi = value,
                     controller: _nifController,
@@ -196,7 +231,7 @@ class _FormUIState extends State<FormUI> {
                     children: [
                       Expanded(
                         child: DropdownFormInput<Type?>(
-                          label: "Tipo",
+                          label: translate(Keys.label_form_type_label_text),
                           value: _data.type,
                           onChange: (value) => _data.type = value,
                           items: [
@@ -226,30 +261,42 @@ class _FormUIState extends State<FormUI> {
               ),
               ExpansionTile(
                 initiallyExpanded: true,
-                title: Text("Endereço e Contato", style: Theme.of(context).textTheme.headline6),
+                title: Text(translate(Keys.label_form_address_header_text),
+                    style: Theme.of(context).textTheme.headline6),
                 childrenPadding: EdgeInsets.all(20),
                 children: [
                   TextFormInput(
-                    label: "Logradouro",
+                    label: translate(Keys.label_form_address_label_text),
+                    initialValue: _data.address,
+                    validation: _validIsNull,
+                    onSaved: (value) => _data.address = value,
+                  ),
+                  TextFormInput(
+                    label: translate(Keys.label_form_neighborhood_label_text),
                     initialValue: _data.neighborhood,
                     validation: _validIsNull,
                     onSaved: (value) => _data.neighborhood = value,
                   ),
-                  TextFormInput(label: "Bairro"),
                   Row(
                     children: [
                       Expanded(
-                          child: TextFormInput(
-                        label: "Número",
-                        initialValue: _data.neighborhood,
-                        validation: _validIsNull,
-                        onSaved: (value) => _data.neighborhood = value,
-                      )),
-                      Expanded(child: TextFormInput(label: "CEP", keyboardType: TextInputType.number, controller: _cepController)),
+                        child: TextFormInput(
+                          label: translate(Keys.label_form_number_label_text),
+                          initialValue: _data.number,
+                          validation: _validIsNull,
+                          onSaved: (value) => _data.number = value,
+                        ),
+                      ),
+                      Expanded(
+                        child: TextFormInput(
+                            label: translate(Keys.label_form_cep_label_text),
+                            keyboardType: TextInputType.number,
+                            controller: _cepController),
+                      ),
                     ],
                   ),
                   TextFormInput(
-                    label: "Complemento",
+                    label: translate(Keys.label_form_complement_label_text),
                     initialValue: _data.complement,
                     onSaved: (value) => _data.complement = value,
                   ),
@@ -258,14 +305,14 @@ class _FormUIState extends State<FormUI> {
                       Expanded(
                           flex: 2,
                           child: TextFormInput(
-                            label: "Município",
-                            initialValue: _data.neighborhood,
+                            label: translate(Keys.label_form_city_label_text),
+                            initialValue: _data.city,
                             validation: _validIsNull,
-                            onSaved: (value) => _data.neighborhood = value,
+                            onSaved: (value) => _data.city = value,
                           )),
                       Expanded(
                           child: TextFormInput(
-                        label: "UF",
+                        label: translate(Keys.label_form_uf_label_text),
                         initialValue: _data.uf,
                         validation: _validUf,
                         onSaved: (value) => _data.uf = value,
@@ -273,13 +320,13 @@ class _FormUIState extends State<FormUI> {
                     ],
                   ),
                   TextFormInput(
-                    label: "E-mail",
+                    label: translate(Keys.label_form_email_label_text),
                     keyboardType: TextInputType.emailAddress,
                     initialValue: _data.email,
                     onSaved: (value) => _data.email = value,
                   ),
                   TextFormInput(
-                    label: "Telefone",
+                    label: translate(Keys.label_form_phone_label_text),
                     keyboardType: TextInputType.phone,
                     initialValue: _data.phone,
                     onSaved: (value) => _data.phone = value,
@@ -287,28 +334,31 @@ class _FormUIState extends State<FormUI> {
                 ],
               ),
               ExpansionTile(
-                title: Text("Situação", style: Theme.of(context).textTheme.headline6),
+                title: Text(translate(Keys.label_form_situation_header_text),
+                    style: Theme.of(context).textTheme.headline6),
                 childrenPadding: EdgeInsets.all(20),
                 children: [
                   TextFormInput(
-                    label: "Situação",
+                    label: translate(Keys.label_form_situation_label_text),
                     initialValue: _data.situation,
                     onSaved: (value) => _data.situation = value,
                   ),
                   DatePickerFormInput(
-                    label: "Data da situação",
+                    label: translate(Keys.label_form_situation_date_label_text),
                     value: _data.situationDate,
                     onChange: (value) => setState(() {
                       _data.situationDate = value;
                     }),
                   ),
                   TextFormInput(
-                    label: "Situação especial",
+                    label:
+                        translate(Keys.label_form_special_situation_label_text),
                     initialValue: _data.especialSituation,
                     onSaved: (value) => _data.especialSituation = value,
                   ),
                   DatePickerFormInput(
-                    label: "Data da situação especial",
+                    label: translate(
+                        Keys.label_form_special_situation_date_label_text),
                     value: _data.especialSituationDate,
                     onChange: (value) => setState(() {
                       _data.especialSituationDate = value;
@@ -317,7 +367,8 @@ class _FormUIState extends State<FormUI> {
                 ],
               ),
               ExpansionTile(
-                title: Text("Quadro de Sócios e Administradores", style: Theme.of(context).textTheme.headline6),
+                title: Text(translate(Keys.label_form_partners_header_text),
+                    style: Theme.of(context).textTheme.headline6),
                 childrenPadding: EdgeInsets.all(20),
                 children: [
                   ListView.separated(
@@ -344,7 +395,9 @@ class _FormUIState extends State<FormUI> {
                 ],
               ),
               ExpansionTile(
-                title: Text("Atividades Principais", style: Theme.of(context).textTheme.headline6),
+                title: Text(
+                    translate(Keys.label_form_main_activities_header_text),
+                    style: Theme.of(context).textTheme.headline6),
                 childrenPadding: EdgeInsets.all(20),
                 children: [
                   ListView.separated(
@@ -365,13 +418,15 @@ class _FormUIState extends State<FormUI> {
                     child: TextButton.icon(
                       icon: Icon(Icons.add),
                       onPressed: () => _editMainActivity(null),
-                      label: Text("Adicionar"),
+                      label: Text(translate(Keys.label_add_button)),
                     ),
                   ),
                 ],
               ),
               ExpansionTile(
-                title: Text("Atividades Secundárias", style: Theme.of(context).textTheme.headline6),
+                title: Text(
+                    translate(Keys.label_form_alt_activities_header_text),
+                    style: Theme.of(context).textTheme.headline6),
                 childrenPadding: EdgeInsets.all(20),
                 children: [
                   ListView.separated(
@@ -392,13 +447,28 @@ class _FormUIState extends State<FormUI> {
                     child: TextButton.icon(
                       icon: Icon(Icons.add),
                       onPressed: () => _editAltActivity(null),
-                      label: Text("Adicionar"),
+                      label: Text(translate(Keys.label_add_button)),
                     ),
                   ),
                 ],
               ),
             ],
           ),
+        ),
+        bottomNavigationBar: Row(
+          children: [
+            Spacer(),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: FloatingButtonLoading(
+                  heroTag: "app_btn",
+                  onPressed: _submit,
+                  label: Text(translate(Keys.label_save_button)),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

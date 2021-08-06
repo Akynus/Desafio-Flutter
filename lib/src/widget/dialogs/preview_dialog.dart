@@ -1,22 +1,25 @@
 import 'package:challenge_flutter/src/models/request_model.dart';
+import 'package:challenge_flutter/src/resources/translate.dart';
 import 'package:challenge_flutter/src/widget/preview_header.dart';
 import 'package:challenge_flutter/src/widget/preview_item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class PreviewData extends StatelessWidget {
+class PreviewDialog extends StatelessWidget {
   final RequestModel data;
 
-  const PreviewData({Key? key, required this.data}) : super(key: key);
+  const PreviewDialog({Key? key, required this.data}) : super(key: key);
 
   void _useData(BuildContext context) async {
     var cancelBtn = TextButton(
-        onPressed: () => Navigator.pop(context, false), child: Text("Não"));
+        onPressed: () => Navigator.pop(context, false),
+        child: Text(translate(Keys.label_no_button)));
     var confirmBtn = TextButton(
-        onPressed: () => Navigator.pop(context, true), child: Text("Sim"));
+        onPressed: () => Navigator.pop(context, true),
+        child: Text(translate(Keys.label_yes_button)));
 
     var alert = AlertDialog(
-      content: Text("Deseja usar as informações desta empresa como cadastro?"),
+      content: Text(translate(Keys.label_preview_dialog_description_text)),
       actions: [cancelBtn, confirmBtn],
     );
 
@@ -35,7 +38,7 @@ class PreviewData extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 70,
         centerTitle: true,
-        title: Text("Informações da Empresa"),
+        title: Text(translate(Keys.label_preview_title_text)),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.close),
@@ -43,53 +46,55 @@ class PreviewData extends StatelessWidget {
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(30),
+          padding: EdgeInsets.only(bottom: 10, left: 30, right: 30),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              PreviewHeader(label: "Dados Gerais"),
+              PreviewHeader(
+                  label: translate(Keys.label_preview_general_header_text)),
               PreviewItem(
                 value: data.name ?? "-",
-                label: 'Razão Social',
+                label: translate(Keys.label_preview_name_label_text),
               ),
               PreviewItem(
                 value: data.nickname ?? "-",
-                label: 'Fantasia',
+                label: translate(Keys.label_preview_nickname_label_text),
               ),
               PreviewItem(
                 value: data.nfi ?? "-",
-                label: 'CNPJ',
+                label: translate(Keys.label_preview_nfi_label_text),
               ),
               Row(
                 children: [
                   PreviewItem(
                     value: describeEnum(data.type ?? "-"),
-                    label: 'Tipo',
+                    label: translate(Keys.label_preview_type_label_text),
                   ),
                   PreviewItem(
                     value: data.opening ?? "-",
-                    label: 'Data de Abertura',
+                    label: translate(Keys.label_preview_opening_label_text),
                   ),
                 ],
               ),
-              PreviewHeader(label: "Endereço"),
+              PreviewHeader(
+                  label: translate(Keys.label_preview_address_header_text)),
               PreviewItem(
                 value: data.address ?? "-",
-                label: 'Logradouro',
+                label: translate(Keys.label_preview_address_label_text),
               ),
               PreviewItem(
                 value: data.neighborhood ?? "-",
-                label: 'Bairro',
+                label: translate(Keys.label_preview_neighborhood_label_text),
               ),
               Row(
                 children: [
                   PreviewItem(
                     value: data.number ?? "-",
-                    label: 'Número',
+                    label: translate(Keys.label_preview_number_label_text),
                   ),
                   PreviewItem(
                     value: data.cep ?? "-",
-                    label: 'CEP',
+                    label: translate(Keys.label_preview_cep_label_text),
                   ),
                 ],
               ),
@@ -98,11 +103,11 @@ class PreviewData extends StatelessWidget {
                   PreviewItem(
                     flex: 3,
                     value: data.city ?? "-",
-                    label: 'Município',
+                    label: translate(Keys.label_preview_city_label_text),
                   ),
                   PreviewItem(
                     value: data.uf ?? "-",
-                    label: 'UF',
+                    label: translate(Keys.label_preview_uf_label_text),
                   ),
                 ],
               ),
@@ -110,13 +115,30 @@ class PreviewData extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: SizedBox(height: 50),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: "app_btn",
-        onPressed: () => _useData(context),
-        label: Text("Cadastrar empresa"),
+      bottomNavigationBar: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(translate(Keys.label_close_button)),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: FloatingActionButton.extended(
+                heroTag: "app_btn",
+                onPressed: () => _useData(context),
+                label: Text(translate(Keys.label_preview_apply_button)),
+              ),
+            ),
+          ),
+        ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
