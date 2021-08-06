@@ -83,6 +83,7 @@ class App extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           localizationDelegate
         ],
+        supportedLocales: [const Locale('pt','BR')],
         initialRoute: HomeUI.route,
         routes: {
           HomeUI.route: (_) => HomeUI(),
