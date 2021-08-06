@@ -34,6 +34,12 @@ class _ActivityDialogState extends State<ActivityDialog> {
     }
   }
 
+  String? _validIsNull(String? value) {
+    if (value == null || value.isEmpty)
+      return translate(Keys.error_required_field);
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,21 +55,13 @@ class _ActivityDialogState extends State<ActivityDialog> {
               label: translate(Keys.label_form_activity_description_label_text),
               initialValue: _data.description,
               onSaved: (value) => _data.description = value,
-              validation: (value) {
-                if (value == null || value.isEmpty)
-                  return translate(Keys.error_required_field);
-                return null;
-              },
+              validation: _validIsNull,
             ),
             TextFormInput(
               label: translate(Keys.label_form_activity_code_label_text),
               controller: _codeController,
-              onSaved: (value) => _data.description = value,
-              validation: (value) {
-                if (value == null || value.isEmpty)
-                  return translate(Keys.error_required_field);
-                return null;
-              },
+              onSaved: (value) => _data.code = value,
+              validation: _validIsNull,
             ),
           ],
         ),
